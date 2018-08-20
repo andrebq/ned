@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package="api";
+package api;
+
+message Line {
+    int64 id = 1;
+    string contents = 2;
+    int32 number = 3;
+}
+
+message LineList {
+    repeated Line lines = 1;
+}
+
+message BufferList {
+    repeated BufferIdentity buffers = 1;
+}
+
+message BufferIdentity {
+    string path = 1;
+}
+
+message BufferQuery {
+    string prefix = 1;
+}
+
+service Buffers {
+    rpc GetContent(BufferIdentity) returns (LineList);
+    rpc WatchLines(BufferIdentity) returns (stream Line);
+}
+
+service Editor {
+    rpc GetBuffers(BufferQuery) returns (BufferList);
+}

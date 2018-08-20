@@ -1,0 +1,5 @@
+cmd/ned-backend/ned-backend
+cmd/ned-backend/ned-backend.exe
+cmd/ned-cli/ned-cli
+cmd/ned-cli/ned-cli.exe
+vendor
