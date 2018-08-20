@@ -25,6 +25,17 @@ message BufferQuery {
     string prefix = 1;
 }
 
+message PingMessage {
+    string nonce = 1;
+    int64 unixNano = 2;
+}
+
+message PongMessage {
+    string nonce = 1;
+    int64 pingUnixNano = 2;
+    int64 pongUnixNano = 3;
+}
+
 service Buffers {
     rpc GetContent(BufferIdentity) returns (LineList);
     rpc WatchLines(BufferIdentity) returns (stream Line);
@@ -32,4 +43,8 @@ service Buffers {
 
 service Editor {
     rpc GetBuffers(BufferQuery) returns (BufferList);
+}
+
+service Session {
+    rpc Ping(PingMessage) returns (PongMessage);
 }

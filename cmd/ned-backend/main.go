@@ -13,8 +13,9 @@ import (
 )
 
 type (
-	editorServer struct{}
-	bufferServer struct{}
+	editorServer  struct{}
+	bufferServer  struct{}
+	sessionServer struct{}
 )
 
 func (es *editorServer) GetBuffers(ctx context.Context, q *api.BufferQuery) (*api.BufferList, error) {
@@ -41,8 +42,16 @@ func (bs *bufferServer) WatchLines(b *api.BufferIdentity, srv api.Buffers_WatchL
 	}
 }
 
+func (ss *sessionServer) Ping(ctx context.Context, b *api.PingMessage) (*api.PongMessage, error) {
+	return &api.PongMessage{
+		Nonce:        b.Nonce,
+		PingUnixNano: b.UnixNano,
+		PongUnixNano: time.Now().UnixNano(),
+	}, nil
+}
+
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 18080))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 19080))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -50,6 +59,7 @@ func main() {
 	s := grpc.NewServer()
 	api.RegisterEditorServer(s, &editorServer{})
 	api.RegisterBuffersServer(s, &bufferServer{})
+	api.RegisterSessionServer(s, &sessionServer{})
 
 	s.Serve(lis)
 }
